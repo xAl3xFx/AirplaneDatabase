@@ -37,7 +37,7 @@ string Validator::validateCommand() const {
     cout << endl;
     std::string delimiter = " ";
     std::string token = command.substr(0, command.find(delimiter)); // token is "scott"
-    if(token.compare("create") == 0 || token.compare("exit") == 0 || token.compare("delete") == 0 || token.compare("update") == 0){
+    if(token.compare("create") == 0 || token.compare("exit") == 0 || token.compare("delete") == 0 || token.compare("update") == 0 || token.compare("show") == 0){
         return command;
     }
 

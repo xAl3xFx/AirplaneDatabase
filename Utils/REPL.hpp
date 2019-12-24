@@ -27,7 +27,8 @@ void REPL::run(){
         cout << "Choose one of the following commands:" << endl;
         cout << "'create ID Type Plane Flights' - Create new Plane." << endl;
         cout << "'delete ID' - Deletes Plane with ID." << endl;
-        cout << "'update ID attribute new_value' - Updates plane with ID, sets attribute's value to new_value." << endl;
+        cout << "'update ID [Id, Type, Plane, Flights] new_value' - Updates plane with ID, sets attribute's value to new_value." << endl;
+        cout << "'show offset limit - Shows 'limit' full records starting from the first + 'offset' record. " << endl;
         cout << "'exit' - Exit from the database." << endl;
         commandStr = Validator::getInstance()->validateCommand();
         std::string delimiter = " ";
@@ -38,6 +39,8 @@ void REPL::run(){
             cd.deletePlane(commandStr);
         }else if(command.compare("update") == 0){
             cd.updatePlane(commandStr);
+        }else if(command.compare("show") == 0){
+            cd.showOffsetLimit(commandStr);
         }
     }
 }

@@ -31,6 +31,8 @@ public:
 
     void updatePlane(string command);
 
+    void showOffsetLimit(string command);
+
     ~CommandDispatcher();
 };
 
@@ -85,6 +87,25 @@ void CommandDispatcher::updatePlane(string command) {
     tokens.push_back(command);
     tokens.erase(tokens.begin());
     ds->updatePlane(tokens);
+}
+
+void CommandDispatcher::showOffsetLimit(string command) {
+    DatabaseService* ds = (DatabaseService::getInstance());
+    long long offset, limit;
+    size_t pos = 0;
+    string token;
+    string delimiter = " ";
+    vector<string> tokens;
+    while ((pos = command.find(delimiter)) != std::string::npos) {
+        token = command.substr(0, pos);
+        tokens.push_back(token);
+        command.erase(0, pos + delimiter.length());
+    }
+    tokens.push_back(command);
+    offset = stoll(tokens[1]);
+    limit = stoll(tokens[2]);
+    ds->showOffsetLimit(offset, limit);
+
 }
 
 #endif //AIRPLANEDATABASE_COMMANDDISPATCHER_HPP

@@ -56,9 +56,11 @@ public:
 
     void createPlane(Plane*);
 
-    void deletePlane(long long id);
+    void deletePlane(long long);
 
     void updatePlane(vector<string>);
+
+    void showOffsetLimit(long long, long long);
 
     ~DatabaseService();
 };
@@ -92,7 +94,9 @@ bool DatabaseService::exists(long long id) {
 void DatabaseService::createPlane(Plane *plane) {
     //TODO: Check if 'id' of the plane exists and validate.
     if(exists(plane->getId())){
-        //TODO: handle plane id already exists
+        cerr << "A record with ID '" << plane->getId() <<"' already exists!" << endl;
+        delete plane;
+        return;
     }
     file.open("Planes.db", std::fstream::out | std::fstream::app);
     string planeToStr = plane->toString();
@@ -123,7 +127,7 @@ void DatabaseService::deletePlane(long long id) {
     file.close();
 
     if(!exists){
-        //TODO: Handle id doesn't exist.
+        cerr << "Invalid ID '" << id <<"' ! No record was deleted!" << endl;
     }
 
     string path = "Planes.db";
@@ -166,8 +170,14 @@ void DatabaseService::updatePlane(vector<string> tokens) {
             lineTokens.push_back(line);
             if(tokens[1].compare("Id") == 0){
                 oFile << tokens[2] << " " <<  lineTokens[1] << " " << lineTokens[2] << " " << lineTokens[3] << "\r\n";
+            }else if(tokens[1].compare("Type") == 0){
+                oFile << tokens[0] << " " <<  tokens[2] << " " << lineTokens[2] << " " << lineTokens[3] << "\r\n";
+            }else if(tokens[1].compare("Name") == 0){
+                oFile << tokens[0] << " " <<  lineTokens[1] << " " << tokens[2] << " " << lineTokens[3] << "\r\n";
+            }else if(tokens[1].compare("Flights") == 0){
+                oFile << tokens[0] << " " <<  lineTokens[1] << " " << tokens[2] << " " << tokens[2] << "\r\n";
             }else{
-                //TODO: handle invalid attribute
+                cerr << "Invalid attribute: " << tokens[1] << " !" << endl;
             }
         }
     }
@@ -177,7 +187,9 @@ void DatabaseService::updatePlane(vector<string> tokens) {
     file.close();
 
     if(!exists){
-        //TODO: Handle id doesn't exist.
+        cerr << "Invalid ID '" << tokens[0] << "' ! No record was updated!" << endl;
+    }else {
+
     }
 
     string path = "Planes.db";
@@ -186,6 +198,21 @@ void DatabaseService::updatePlane(vector<string> tokens) {
     rename("Temp.db", p);
 
 
+}
+
+void DatabaseService::showOffsetLimit(long long offset, long long limit) {
+    file.open("Planes.db", std::fstream::in);
+    string line;
+    int counter = 0;
+    //TODO: Validate offset, limit >= 0
+    while (!safeGetline(file, line).eof() && limit >0) {
+        if(counter >= offset){
+            cout << line << endl;
+            limit--;
+        }
+        counter++;
+    }
+    file.close();
 }
 
 
