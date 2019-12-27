@@ -6,6 +6,7 @@
 #define AIRPLANEDATABASE_DATABASESERVICE_HPP
 
 #include "./../Models/Plane.hpp"
+#include "./../Models/AVLTree.hpp"
 #include <fstream>
 #include <string>
 #include <vector>
@@ -48,7 +49,9 @@ class DatabaseService{
 
     bool exists(long long id);
 
-    //void printAnimalsList();
+    bool optimized;
+
+    BST* tree;
 
 public:
 
@@ -62,12 +65,16 @@ public:
 
     void showOffsetLimit(long long, long long);
 
+    void createTree();
+
+    Plane* search(long long);
+
     ~DatabaseService();
 };
 
 DatabaseService* DatabaseService::instance = 0;
 
-DatabaseService::DatabaseService(){}
+DatabaseService::DatabaseService()  : optimized(false), tree(nullptr) {}
 
 DatabaseService* DatabaseService::getInstance(){
 
@@ -78,21 +85,25 @@ DatabaseService* DatabaseService::getInstance(){
 }
 
 DatabaseService::~DatabaseService(){
+    delete tree;
     file.close();
 }
 
 bool DatabaseService::exists(long long id) {
     file.open("Planes.db", std::fstream::in);
     string line;
-    while (!safeGetline(file, line).eof())
-        if (line.find(to_string(id)) == 0)
+    while (!safeGetline(file, line).eof()){
+        if (line.find(to_string(id)) == 0){
+            file.close();
             return true;
+        }
+    }
+    file.close();
     return false;
 }
 
 
 void DatabaseService::createPlane(Plane *plane) {
-    //TODO: Check if 'id' of the plane exists and validate.
     if(exists(plane->getId())){
         cerr << "A record with ID '" << plane->getId() <<"' already exists!" << endl;
         delete plane;
@@ -103,10 +114,10 @@ void DatabaseService::createPlane(Plane *plane) {
     file << planeToStr << "\r\n";
     file.close();
     delete plane;
+    optimized = false;
 }
 
 void DatabaseService::deletePlane(long long id) {
-    //TODO: Check if 'id' exists and validate.
     //Not using exists() for optimization purposes.
     bool exists = false;
     file.open("Planes.db", std::fstream::in);
@@ -134,13 +145,10 @@ void DatabaseService::deletePlane(long long id) {
     const char * p = path.c_str(); // required conversion for remove and rename functions
     remove(p);
     rename("Temp.db", p);
+    optimized = false;
 }
 
 void DatabaseService::updatePlane(vector<string> tokens) {
-    /// 0 - ID
-    /// 1 - Attribute
-    /// 2 - New value
-    //TODO: Check if 'id' exists and validate.
     //Not using exists() for optimization purposes.
     bool exists = false;
     file.open("Planes.db", std::fstream::in);
@@ -196,8 +204,7 @@ void DatabaseService::updatePlane(vector<string> tokens) {
     const char * p = path.c_str(); // required conversion for remove and rename functions
     remove(p);
     rename("Temp.db", p);
-
-
+    optimized = false;
 }
 
 void DatabaseService::showOffsetLimit(long long offset, long long limit) {
@@ -215,5 +222,39 @@ void DatabaseService::showOffsetLimit(long long offset, long long limit) {
     file.close();
 }
 
+void DatabaseService::createTree() {
+    BST* t = new BST();
+    file.open("Planes.db", std::fstream::in);
+    string line;
+    while (!safeGetline(file, line).eof()){
+        Plane *p = new Plane(line, false);
+        t->insert(p);
+    }
+    this->tree = t;
+    optimized = true;
+}
+
+Plane* DatabaseService::search(long long id) {
+    if(optimized){
+        return tree->find(id);
+    }else{
+        if(!exists(id)){
+            return nullptr;
+        }
+        file.open("Planes.db", std::fstream::in);
+        string line;
+        string planeStr = "";
+        while (!safeGetline(file, line).eof()) {
+            if (line.find(to_string(id)) == 0){
+                planeStr = line;
+                break;
+            }
+        }
+
+        file.close();
+        Plane* plane = new Plane(planeStr, false);
+        return plane;
+    }
+}
 
 #endif //AIRPLANEDATABASE_DATABASESERVICE_HPP

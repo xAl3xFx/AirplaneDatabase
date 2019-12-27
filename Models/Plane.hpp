@@ -20,7 +20,8 @@ public:
     };
 
     Plane(long long _id, std::string _plane, Type _type, unsigned long long _flights) : id(_id), plane(_plane), type(_type), flights(_flights) {}
-    Plane(string);
+    Plane();
+    Plane(string, bool);
     string toString() const;
     long long getId() const;
 
@@ -33,7 +34,7 @@ private:
 
 };
 
-Plane::Plane(string str) {
+Plane::Plane(string str, bool withCommand) {
     size_t pos = 0;
     string token;
     string delimiter = " ";
@@ -44,16 +45,30 @@ Plane::Plane(string str) {
         str.erase(0, pos + delimiter.length());
     }
     tokens.push_back(str);
-    id = stoll(tokens[1]);
-    plane = tokens[2];
-    if(tokens[3].compare("Jet") == 0){
-        type = Jet;
-    }else if(tokens[3].compare("Cargo") == 0){
-        type = Cargo;
-    }else if(tokens[3].compare("Airliner") == 0){
-        type = Airliner;
+    if(withCommand){
+        id = stoll(tokens[1]);
+        plane = tokens[2];
+        if(tokens[3].compare("Jet") == 0){
+            type = Jet;
+        }else if(tokens[3].compare("Cargo") == 0){
+            type = Cargo;
+        }else if(tokens[3].compare("Airliner") == 0){
+            type = Airliner;
+        }
+        flights = stoull(tokens[4]);
+    }else{
+        id = stoll(tokens[0]);
+        plane = tokens[1];
+        if(tokens[2].compare("Jet") == 0){
+            type = Jet;
+        }else if(tokens[2].compare("Cargo") == 0){
+            type = Cargo;
+        }else if(tokens[2].compare("Airliner") == 0){
+            type = Airliner;
+        }
+        flights = stoull(tokens[3]);
     }
-    flights = stoull(tokens[4]);
+
 }
 
 string Plane::toString() const{
@@ -71,5 +86,6 @@ string Plane::toString() const{
 long long Plane::getId() const {
     return this->id;
 }
+
 
 #endif //AIRPLANEDATABASE_PLANE_HPP

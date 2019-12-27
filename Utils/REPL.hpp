@@ -17,7 +17,7 @@ public:
 };
 
 void REPL::run(){
-    cout << "Welcome to the Zoo!" << endl;
+    cout << "Welcome to the Airplane Database Command Center!" << endl;
 
     string command = "";
     string commandStr = "";
@@ -29,6 +29,8 @@ void REPL::run(){
         cout << "'delete ID' - Deletes Plane with ID." << endl;
         cout << "'update ID [Id, Type, Plane, Flights] new_value' - Updates plane with ID, sets attribute's value to new_value." << endl;
         cout << "'show offset limit - Shows 'limit' full records starting from the first + 'offset' record. " << endl;
+        cout << "'optimize' - Optimizes the search process." << endl;
+        cout << "'search ID' - Search for plane by given 'ID'" << endl;
         cout << "'exit' - Exit from the database." << endl;
         commandStr = Validator::getInstance()->validateCommand();
         std::string delimiter = " ";
@@ -41,6 +43,10 @@ void REPL::run(){
             cd.updatePlane(commandStr);
         }else if(command.compare("show") == 0){
             cd.showOffsetLimit(commandStr);
+        }else if(command.compare("optimize") == 0){
+            cd.optimize();
+        }else if(command.compare("search") == 0){
+            cd.search(commandStr);
         }
     }
 }

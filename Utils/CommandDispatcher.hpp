@@ -7,6 +7,7 @@
 
 #include "./../Models/Plane.hpp"
 #include "./../Services/DatabaseService.hpp"
+#include "./../Models/AVLTree.hpp"
 #include <fstream>
 #include <string>
 #include <vector>
@@ -19,7 +20,7 @@ class CommandDispatcher{
 
     CommandDispatcher();
 
-    //void printAnimalsList();
+
 
 public:
 
@@ -32,6 +33,10 @@ public:
     void updatePlane(string command);
 
     void showOffsetLimit(string command);
+
+    void optimize();
+
+    void search(string command);
 
     ~CommandDispatcher();
 };
@@ -49,11 +54,12 @@ CommandDispatcher* CommandDispatcher::getInstance(){
 }
 
 CommandDispatcher::~CommandDispatcher(){
+
 }
 
 void CommandDispatcher::createPlane(std::string command) {
     DatabaseService* ds = (DatabaseService::getInstance());
-    Plane* plane = new Plane(command);
+    Plane* plane = new Plane(command, true);
     ds->createPlane(plane);
 }
 
@@ -105,7 +111,21 @@ void CommandDispatcher::showOffsetLimit(string command) {
     offset = stoll(tokens[1]);
     limit = stoll(tokens[2]);
     ds->showOffsetLimit(offset, limit);
+}
 
+void CommandDispatcher::optimize() {
+    DatabaseService* ds = (DatabaseService::getInstance());
+    ds->createTree();
+}
+
+void CommandDispatcher::search(string command) {
+    long long id = stoll(command.substr(command.find(" "), command.length() -1));
+    DatabaseService* ds = (DatabaseService::getInstance());
+    Plane* plane = ds->search(id);
+    if(plane)
+        cout << plane->toString();
+    else
+        cerr << "Plane with id '" << id << "' was not found!";
 }
 
 #endif //AIRPLANEDATABASE_COMMANDDISPATCHER_HPP
