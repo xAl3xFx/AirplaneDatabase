@@ -172,18 +172,18 @@ void DatabaseService::updatePlane(vector<string> tokens) {
             }
             ///Line tokens:
             /// 0 - Id
-            /// 1 - Type
-            /// 2 - Name
+            /// 1 - Plane
+            /// 2 - Type
             /// 3 - Flights
             lineTokens.push_back(line);
             if(tokens[1].compare("Id") == 0){
                 oFile << tokens[2] << " " <<  lineTokens[1] << " " << lineTokens[2] << " " << lineTokens[3] << "\r\n";
             }else if(tokens[1].compare("Type") == 0){
-                oFile << tokens[0] << " " <<  tokens[2] << " " << lineTokens[2] << " " << lineTokens[3] << "\r\n";
-            }else if(tokens[1].compare("Name") == 0){
                 oFile << tokens[0] << " " <<  lineTokens[1] << " " << tokens[2] << " " << lineTokens[3] << "\r\n";
+            }else if(tokens[1].compare("Plane") == 0){
+                oFile << tokens[0] << " " <<  tokens[2] << " " << lineTokens[2] << " " << lineTokens[3] << "\r\n";
             }else if(tokens[1].compare("Flights") == 0){
-                oFile << tokens[0] << " " <<  lineTokens[1] << " " << tokens[2] << " " << tokens[2] << "\r\n";
+                oFile << tokens[0] << " " <<  lineTokens[1] << " " << lineTokens[2] << " " << tokens[2] << "\r\n";
             }else{
                 cerr << "Invalid attribute: " << tokens[1] << " !" << endl;
             }
@@ -197,7 +197,7 @@ void DatabaseService::updatePlane(vector<string> tokens) {
     if(!exists){
         cerr << "Invalid ID '" << tokens[0] << "' ! No record was updated!" << endl;
     }else {
-
+        cout << endl << "Successful operation!" << endl;
     }
 
     string path = "Planes.db";

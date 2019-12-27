@@ -77,7 +77,13 @@ string Plane::toString() const{
     result.append(" ");
     result.append(this->plane);
     result.append(" ");
-    result.append(std::to_string(this->type));
+    if(this->type == Plane::Jet){
+        result.append("Jet");
+    }else if(this->type == Plane::Cargo){
+        result.append("Cargo");
+    }else{
+        result.append("Airliner");
+    }
     result.append(" ");
     result.append(std::to_string(this->flights));
     return result;

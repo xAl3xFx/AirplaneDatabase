@@ -25,7 +25,7 @@ void REPL::run(){
     while(command.compare("exit") != 0){
         cout << endl;
         cout << "Choose one of the following commands:" << endl;
-        cout << "'create ID Type Plane Flights' - Create new Plane." << endl;
+        cout << "'create ID Plane [Jet, Cargo, Airliner] Flights' - Create new Plane." << endl;
         cout << "'delete ID' - Deletes Plane with ID." << endl;
         cout << "'update ID [Id, Type, Plane, Flights] new_value' - Updates plane with ID, sets attribute's value to new_value." << endl;
         cout << "'show offset limit - Shows 'limit' full records starting from the first + 'offset' record. " << endl;
